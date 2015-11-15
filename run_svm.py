@@ -35,6 +35,8 @@ def parse_args():
                         help="use weighted samples?")
     parser.add_argument('--kernel', '-k', action='store', dest='kernel', default='linear',
                         required=False, type=str)
+    parser.add_argument('--C', '-C', action='store', dest='C', default=1.0,
+                        required=False, type=float)
     parser.add_argument('--forward', '-f', action='store', dest='forward', default=True,
                         help='forward mapped reads?')
     args = parser.parse_args()
@@ -84,7 +86,8 @@ def main(args):
             "iterations": args.iter,
             "out_path": args.out,
             "kernel": args.kernel,
-            "max_samples": args.nb_files
+            "max_samples": args.nb_files,
+            "C": args.C
         }
         work_queue.put(svm_args)
 
