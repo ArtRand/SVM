@@ -4,9 +4,8 @@
 from __future__ import print_function, division
 import numpy as np
 import os
-from sklearn import svm
+from sklearn import svm, mixture, linear_model
 from random import shuffle
-import matplotlib.pyplot as plt
 
 
 def get_motif_ranges(ref_start, forward):
@@ -123,7 +122,9 @@ def run_svm_on_motif(c_files, mc_files, hmc_files, weighted, forward, ref_start,
                                                                         motif_start=ref_start, max_samples=max_samples)
         training_data = np.vstack((c_train, mc_train, hmc_train))
         weights = np.concatenate((c_weights, mc_weights, hmc_weights))
+
         clf = svm.SVC(kernel=kernel, C=C)
+
         if weighted:
             clf.fit(training_data, labels, sample_weight=weights)
         else:
