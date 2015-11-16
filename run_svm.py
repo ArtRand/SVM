@@ -37,8 +37,8 @@ def parse_args():
                         required=False, type=str)
     parser.add_argument('--C', '-C', action='store', dest='C', default=1.0,
                         required=False, type=float)
-    parser.add_argument('--forward', '-f', action='store', dest='forward', default=True,
-                        help='forward mapped reads?')
+    parser.add_argument('--backward', '-bw', action='store_false', dest='forward',
+                        default=True, help='forward mapped reads?')
     args = parser.parse_args()
     return args
 
@@ -101,6 +101,8 @@ def main(args):
         p.join()
 
     done_queue.put('STOP')
+
+    print >> sys.stderr, "\n\tFinished SVM"
 
 
 if __name__ == "__main__":

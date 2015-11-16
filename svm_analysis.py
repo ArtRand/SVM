@@ -133,17 +133,20 @@ def run_svm_on_motif(c_files, mc_files, hmc_files, weighted, forward, ref_start,
 
         c_predictions = clf.predict(c_test)
         nb_c_correct = list(c_predictions).count(0)
-        c_accuracy = list(c_predictions).count(0) / float(len(c_predictions))
+        c_accuracy = nb_c_correct / float(len(c_predictions))
+        #print(c_predictions, nb_c_correct, c_accuracy)
         print(c_accuracy, end='\t', file=out_file)
 
         mc_predictions = clf.predict(mc_test)
         nb_mc_correct = list(mc_predictions).count(1)
-        mc_accuracy = list(mc_predictions).count(1) / float(len(mc_predictions))
+        mc_accuracy = nb_mc_correct / float(len(mc_predictions))
+        #print(hmc_predictions, nb_hmc_correct, hmc_accuracy)
         print(mc_accuracy, end='\t', file=out_file)
 
         hmc_predictions = clf.predict(hmc_test)
         nb_hmc_correct = list(hmc_predictions).count(2)
-        hmc_accuracy = list(hmc_predictions).count(2) / float(len(hmc_predictions))
+        hmc_accuracy = nb_hmc_correct / float(len(hmc_predictions))
+        #print(hmc_predictions, nb_hmc_correct, hmc_accuracy)
         print(hmc_accuracy, end='\n', file=out_file)
         accuracy = (nb_c_correct + nb_mc_correct + nb_hmc_correct) / (len(c_predictions) + len(mc_predictions) +
                                                                       len(hmc_predictions))
