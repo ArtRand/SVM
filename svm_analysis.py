@@ -61,9 +61,9 @@ def collect_data_vectors(path, forward, labels, label, portion, motif_start, max
     """
     # collect the files
     if forward:
-        tsvs = [x for x in os.listdir(path) if x.endswith(".forward.tsv")]
+        tsvs = [x for x in os.listdir(path) if x.endswith(".forward.tsv") and os.stat(path + x).st_size != 0]
     else:
-        tsvs = [x for x in os.listdir(path) if x.endswith(".backward.tsv")]
+        tsvs = [x for x in os.listdir(path) if x.endswith(".backward.tsv") and os.stat(path + x).st_size != 0]
 
     # shuffle
     shuffle(tsvs)
