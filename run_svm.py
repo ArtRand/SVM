@@ -20,6 +20,14 @@ def parse_args():
     parser.add_argument('--hmC_files', '-hmc', action='store',
                         dest='hmc_files', required=True, type=str, default=None,
                         help="directory with hmC files")
+    parser.add_argument('--weighted', '-w', action='store_true', dest='weighted', default=False,
+                        help="use weighted samples?")
+    parser.add_argument('--kernel', '-k', action='store', dest='kernel', default='linear',
+                        required=False, type=str)
+    parser.add_argument('--C', '-C', action='store', dest='C', default=1.0,
+                        required=False, type=float)
+    parser.add_argument('--backward', '-bw', action='store_false', dest='forward',
+                        default=True, help='forward mapped reads?')
     parser.add_argument('-nb_files', '-nb', action='store', dest='nb_files', required=False,
                         default=50, type=int, help="maximum number of reads to align")
     parser.add_argument('--jobs', '-j', action='store', dest='jobs', required=False,
@@ -31,14 +39,6 @@ def parse_args():
     parser.add_argument('--output_location', '-o', action='store', dest='out',
                         required=True, type=str, default=None,
                         help="directory to put results")
-    parser.add_argument('--weighted', '-w', action='store', dest='weighted', default=False,
-                        help="use weighted samples?")
-    parser.add_argument('--kernel', '-k', action='store', dest='kernel', default='linear',
-                        required=False, type=str)
-    parser.add_argument('--C', '-C', action='store', dest='C', default=1.0,
-                        required=False, type=float)
-    parser.add_argument('--backward', '-bw', action='store_false', dest='forward',
-                        default=True, help='forward mapped reads?')
     args = parser.parse_args()
     return args
 
