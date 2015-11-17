@@ -2,7 +2,7 @@
 """Run a SVM on collected alignment data
 """
 import sys
-from svm_analysis import run_svm_on_motif
+from svm_analysis import run_svm_on_motif, run_svm_on_motif2
 from argparse import ArgumentParser
 from multiprocessing import Process, current_process, Manager
 
@@ -29,7 +29,7 @@ def parse_args():
     parser.add_argument('--backward', '-bw', action='store_false', dest='forward',
                         default=True, help='forward mapped reads?')
     parser.add_argument('-nb_files', '-nb', action='store', dest='nb_files', required=False,
-                        default=50, type=int, help="maximum number of reads to align")
+                        default=50, type=int, help="maximum number of reads to use")
     parser.add_argument('--jobs', '-j', action='store', dest='jobs', required=False,
                         default=4, type=int, help="number of jobs to run concurrently")
     parser.add_argument('--iter', '-i', action='store', dest='iter', required=False,
@@ -46,7 +46,8 @@ def parse_args():
 def run_svm(work_queue, done_queue):
     try:
         for f in iter(work_queue.get, 'STOP'):
-            run_svm_on_motif(**f)
+            #run_svm_on_motif(**f)
+            run_svm_on_motif2(**f)
     except Exception:
         done_queue.put("%s failed" % current_process().name)
 
@@ -55,6 +56,7 @@ def main(args):
     args = parse_args()
 
     start_message = """
+    Command line: {cmd}
     Starting SVM analysis.
     Looking at {nbFiles} files.
     Forward mapped strand: {forward}.
@@ -63,7 +65,8 @@ def main(args):
     Train/test split: {train_test}.
     Kernel: {kernel}
     Output to: {out}""".format(nbFiles=args.nb_files, forward=args.forward, weights=args.weighted,
-                               iter=args.iter, train_test=args.split, kernel=args.kernel, out=args.out)
+                               iter=args.iter, train_test=args.split, kernel=args.kernel, out=args.out,
+                               cmd=" ".join(sys.argv[:]))
 
     print >> sys.stderr, start_message
 

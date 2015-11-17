@@ -151,8 +151,60 @@ def run_svm_on_motif(c_files, mc_files, hmc_files, weighted, forward, ref_start,
         accuracy = (nb_c_correct + nb_mc_correct + nb_hmc_correct) / (len(c_predictions) + len(mc_predictions) +
                                                                       len(hmc_predictions))
         calls.append(accuracy)
-
     print(">{motif}\t{mean}".format(motif=ref_start, mean=np.mean(calls)), end='\n', file=out_file)
+    return
 
+
+def run_svm_on_motif2(c_files, mc_files, hmc_files, weighted, forward, ref_start, train_test_split, iterations,
+                     out_path, kernel, max_samples, C):
+
+    if forward:
+        direction_label = ".forward."
+    else:
+        direction_label = ".backward."
+
+    out_file = open(out_path + str(ref_start) + direction_label + str(iterations) + ".tsv", 'wa')
+
+    # bin to hold accuracies for each iteration
+    scores = []
+
+    for i in xrange(iterations):
+        labels = []
+        c_train, c_weights, labels, c_test = collect_data_vectors(path=c_files, forward=forward, labels=labels,
+                                                                  label=0, portion=train_test_split,
+                                                                  motif_start=ref_start, max_samples=max_samples)
+
+        mc_train, mc_weights, labels, mc_test = collect_data_vectors(path=mc_files, forward=forward, labels=labels,
+                                                                     label=1, portion=train_test_split,
+                                                                     motif_start=ref_start, max_samples=max_samples)
+
+        hmc_train, hmc_weights, labels, hmc_test = collect_data_vectors(path=hmc_files, forward=forward, labels=labels,
+                                                                        label=2, portion=train_test_split,
+                                                                        motif_start=ref_start, max_samples=max_samples)
+        training_data = np.vstack((c_train, mc_train, hmc_train))
+        weights = np.concatenate((c_weights, mc_weights, hmc_weights))
+
+        clf = svm.SVC(kernel=kernel, C=C)
+
+        if weighted:
+            clf.fit(training_data, labels, sample_weight=weights)
+        else:
+            clf.fit(training_data, labels)
+
+        c_test_labels = np.zeros(len(c_test))
+
+        mc_test_labels = np.zeros(len(mc_test))
+        mc_test_labels.fill(1)
+
+        hmc_test_labels = np.zeros(len(hmc_test))
+        hmc_test_labels.fill(2)
+
+        all_test_data = np.vstack((c_test, mc_test, hmc_test))
+        all_test_labels = np.concatenate((c_test_labels, mc_test_labels, hmc_test_labels))
+        score = clf.score(all_test_data, all_test_labels)
+        print(score, file=out_file)
+        scores.append(score)
+
+    print(">{motif}\t{mean}".format(motif=ref_start, mean=np.mean(scores)), end='\n', file=out_file)
     return
 
