@@ -40,6 +40,7 @@ def cull_motif_features(start, tsv, forward):
             delta_mean = float(line[5]) - float(line[9])
             delta_noise = float(line[6]) - float(line[10])
             posterior = line[8]
+
             # if the posterior for this event is higher than the one we have previously seen,
             if posterior > feature_posteriors[e_index]:
                 feature_vector[e_index] = delta_mean
@@ -49,6 +50,7 @@ def cull_motif_features(start, tsv, forward):
             delta_mean = float(line[5]) - float(line[9])
             delta_noise = float(line[6]) - float(line[10])
             posterior = line[8]
+
             if posterior > feature_posteriors[e_index]:
                 feature_vector[e_index] = delta_mean
                 feature_posteriors[e_index] = posterior
@@ -85,7 +87,7 @@ def collect_data_vectors(path, forward, labels, label, portion, motif_start, max
         weight, vector = cull_motif_features(motif_start, path + f, forward)
         train_data[i:i + 1] = vector
         weights[i] = weight
-        labels.append(label)
+        labels.append(label)  # TODO move this out of the function
 
     for i, f in enumerate(tsvs[split_index:]):
         weight, vector = cull_motif_features(motif_start, path + f, forward)
